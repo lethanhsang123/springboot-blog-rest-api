@@ -25,8 +25,10 @@ public class PostController {
     }
 
     // create blog post
+
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/api/v1/posts")
+
     public ResponseEntity<PostDto> createPost(@Valid @RequestBody PostDto postDto) {
         return new ResponseEntity<>(postService.createPost(postDto), HttpStatus.CREATED);
     }
@@ -51,6 +53,7 @@ public class PostController {
 
     @PreAuthorize("hasRole('ADMIN')")
     // update post by id rest api
+
     @PutMapping("/api/v1/posts/{id}")
     public ResponseEntity<PostDto> updatePost(@Valid @RequestBody PostDto postDto,
                                               @PathVariable(name = "id") long id
