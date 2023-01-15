@@ -8,12 +8,13 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/posts")
+@RequestMapping()
 public class PostController {
 
     private PostService postService;
@@ -24,13 +25,16 @@ public class PostController {
     }
 
     // create blog post
-    @PostMapping("")
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/api/v1/posts")
+
     public ResponseEntity<PostDto> createPost(@Valid @RequestBody PostDto postDto) {
         return new ResponseEntity<>(postService.createPost(postDto), HttpStatus.CREATED);
     }
 
     // get all posts Rest API
-    @GetMapping()
+    @GetMapping("/api/v1/posts")
     public PostResponse getAllPosts(
             @RequestParam(value = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
             @RequestParam(value = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
@@ -42,13 +46,15 @@ public class PostController {
     }
 
     // get post by ID
-    @GetMapping("/{id}")
+    @GetMapping("/api/v1/posts/{id}")
     public ResponseEntity<PostDto> getPostById(@PathVariable(name = "id") long id) {
         return ResponseEntity.ok(postService.getPostById(id));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     // update post by id rest api
-    @PutMapping("/{id}")
+
+    @PutMapping("/api/v1/posts/{id}")
     public ResponseEntity<PostDto> updatePost(@Valid @RequestBody PostDto postDto,
                                               @PathVariable(name = "id") long id
                                               ) {
@@ -57,8 +63,9 @@ public class PostController {
         return new ResponseEntity<>(postDtoResponse, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     // delete Post Rest API
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/api/v1/posts/{id}")
     public ResponseEntity<String> deletePost(@PathVariable(name = "id") long id) {
         postService.deletePostById(id);
 
