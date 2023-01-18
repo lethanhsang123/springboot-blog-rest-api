@@ -1,9 +1,5 @@
 package com.springboot.blog.config;
 
-import com.springboot.blog.security.CustomUserDetailsService;
-import com.springboot.blog.security.JwtAuthenticationEntryPoint;
-import com.springboot.blog.security.JwtAuthenticationFilter;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +15,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.springboot.blog.security.CustomUserDetailsService;
+import com.springboot.blog.security.JwtAuthenticationEntryPoint;
+import com.springboot.blog.security.JwtAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -54,6 +54,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers(HttpMethod.GET,"/api/v1/**").permitAll()
                 .requestMatchers("/api/v1/auth/**").permitAll()
+                .requestMatchers("/v3/api-docs/**").permitAll()
+                .requestMatchers("/swagger-ui/**").permitAll()
+                .requestMatchers("/swagger-resources/**").permitAll()
+                .requestMatchers("/swagger-ui.html/**").permitAll()
+                .requestMatchers("/webjars/**").permitAll()
                 .anyRequest()
                 .authenticated();
         
