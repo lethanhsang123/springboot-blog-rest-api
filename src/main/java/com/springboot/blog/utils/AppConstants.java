@@ -7,5 +7,9 @@ public class AppConstants {
     public static final String DEFAULT_SORT_BY = "id";
     public static final String DEFAULT_SORT_DIRECTION = "asc";
 
+//    KEY CACHE
+    public static final String POST_KEY_PREFIX = "POST";
+    public static final String COMMENT_KEY_PREFIX = "COMMENT";
+
 
 }

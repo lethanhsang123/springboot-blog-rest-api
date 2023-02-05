@@ -1,8 +1,13 @@
 package com.springboot.blog.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.springboot.blog.repository.cache.RedisRepository;
+import com.springboot.blog.service.cache.RedisService;
+import com.springboot.blog.service.cache.impl.RedisPostServiceImpl;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,16 +23,20 @@ import com.springboot.blog.repository.PostRepository;
 import com.springboot.blog.service.PostService;
 
 @Service
+@AllArgsConstructor
 public class PostServiceImpl implements PostService {
 
-    private PostRepository postRepository;
+    private final PostRepository postRepository;
 
-    private ModelMapper mapper;
+    private final ModelMapper mapper;
 
-    public PostServiceImpl(PostRepository postRepository, ModelMapper mapper) {
-        this.postRepository = postRepository;
-        this.mapper = mapper;
-    }
+    private final RedisService<Long, Post> redisService;
+
+//    public PostServiceImpl(PostRepository postRepository, ModelMapper mapper, RedisPostServiceImpl redisRepository) {
+//        this.postRepository = postRepository;
+//        this.mapper = mapper;
+//        this.redisPostService = redisRepository;
+//    }
 
     @Override
     public PostDto createPost(PostDto postDto) {
@@ -95,15 +104,25 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostDto getPostById(long id) {
-        Post post = postRepository.findById(id).
-                orElseThrow(()->
-                        new ResourceNotFoundException("Post", "id",id));
+        // Check Post in Redis cache
+        System.out.println("Getting Post in Cache");
+        Post post = redisService.get(id);
+
+        // Get data in Database
+        if(post == null) {
+           post = postRepository.findById(id).
+                   orElseThrow(()->
+                           new ResourceNotFoundException("Post", "id",id));
+            System.out.println("Doesn't exist Post in Cache");
+            redisService.put(post.getId(), post);
+            System.out.println("Save Post into Cache");
+        }
         return mapToDto(post);
     }
 
     @Override
     public PostDto updatePost(PostDto postDto, long id) {
-        // get post by id from the database
+        // Get post by id from the database
         Post post = postRepository.findById(id).
                 orElseThrow(()->
                         new ResourceNotFoundException("Post", "id",id));
@@ -111,17 +130,29 @@ public class PostServiceImpl implements PostService {
         post.setDescription(postDto.getDescription());
         post.setContent(postDto.getContent());
 
+        // Update Post into Database
         Post updatePost = postRepository.save(post);
+
+        // Check Post in Cache
+        Post cachePost = redisService.get(id);
+        if (cachePost != null) {
+            redisService.put(id, post);
+        }
 
         return mapToDto(updatePost);
     }
 
     @Override
     public void deletePostById(long id) {
-        // get post by id from the database
+        // Get post by id from the database
         Post post = postRepository.findById(id).
                 orElseThrow(()->
                         new ResourceNotFoundException("Post", "id",id));
         postRepository.delete(post);
+
+        // Delete Post in Cache if exist
+        if( redisService.get(id) != null ) {
+            redisService.delete(id);
+        }
     }
 }
