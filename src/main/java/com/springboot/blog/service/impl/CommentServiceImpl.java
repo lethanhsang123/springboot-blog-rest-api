@@ -3,6 +3,9 @@ package com.springboot.blog.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.springboot.blog.service.cache.impl.RedisCommentServiceImpl;
+import com.springboot.blog.service.cache.impl.RedisPostServiceImpl;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,19 +21,13 @@ import com.springboot.blog.repository.PostRepository;
 import com.springboot.blog.service.CommentService;
 
 @Service
+@AllArgsConstructor
 public class CommentServiceImpl implements CommentService {
 
-    private CommentRepository commentRepository;
-    private PostRepository postRepository;
+    private final CommentRepository commentRepository;
+    private final PostRepository postRepository;
+    private final ModelMapper mapper;
 
-    private ModelMapper mapper;
-
-    @Autowired
-    public CommentServiceImpl(CommentRepository commentRepository, PostRepository postRepository, ModelMapper mapper) {
-        this.commentRepository = commentRepository;
-        this.postRepository = postRepository;
-        this.mapper = mapper;
-    }
 
     @Override
     public CommentDto createComment(long postId, CommentDto commentDto) {

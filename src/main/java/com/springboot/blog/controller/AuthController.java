@@ -1,7 +1,13 @@
 package com.springboot.blog.controller;
 
-import java.util.Collections;
-
+import com.springboot.blog.entity.Role;
+import com.springboot.blog.entity.User;
+import com.springboot.blog.payload.JWTAuthResponse;
+import com.springboot.blog.payload.LoginDto;
+import com.springboot.blog.payload.SignUpDto;
+import com.springboot.blog.repository.RoleRepository;
+import com.springboot.blog.repository.UserRepository;
+import com.springboot.blog.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,14 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.springboot.blog.entity.Role;
-import com.springboot.blog.entity.User;
-import com.springboot.blog.payload.JWTAuthResponse;
-import com.springboot.blog.payload.LoginDto;
-import com.springboot.blog.payload.SignUpDto;
-import com.springboot.blog.repository.RoleRepository;
-import com.springboot.blog.repository.UserRepository;
-import com.springboot.blog.security.JwtTokenProvider;
+import java.util.Collections;
 
 @RestController
 @RequestMapping("/api/v1/auth")
