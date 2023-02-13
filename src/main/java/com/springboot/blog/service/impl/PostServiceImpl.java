@@ -1,12 +1,12 @@
 package com.springboot.blog.service.impl;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import com.springboot.blog.repository.cache.RedisRepository;
+import com.springboot.blog.entity.Post;
+import com.springboot.blog.exception.ResourceNotFoundException;
+import com.springboot.blog.payload.PostDto;
+import com.springboot.blog.payload.PostResponse;
+import com.springboot.blog.repository.PostRepository;
+import com.springboot.blog.service.PostService;
 import com.springboot.blog.service.cache.RedisService;
-import com.springboot.blog.service.cache.impl.RedisPostServiceImpl;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -15,12 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.springboot.blog.entity.Post;
-import com.springboot.blog.exception.ResourceNotFoundException;
-import com.springboot.blog.payload.PostDto;
-import com.springboot.blog.payload.PostResponse;
-import com.springboot.blog.repository.PostRepository;
-import com.springboot.blog.service.PostService;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
